@@ -17,6 +17,17 @@ if (isset($_POST['login']) && !empty($_POST['username']) && !empty($_POST['passw
         $loginMsg = 'Wrong username or password.';
     }
 }
+
+// directory deletion logic
+if(isset($_POST['delete'])){
+    $objToDelete = './' . $_GET["path"] . $_POST['delete']; 
+    $objToDeleteEscaped = str_replace("&nbsp;", " ", htmlentities($objToDelete, null, 'utf-8'));
+    if(is_file($objToDeleteEscaped)){
+        if (file_exists($objToDeleteEscaped)) {
+            unlink($objToDeleteEscaped);
+        }
+    }
+}
 ?>
 
 
@@ -94,6 +105,16 @@ if (isset($_POST['login']) && !empty($_POST['username']) && !empty($_POST['passw
                         : $_SERVER['REQUEST_URI'] . '?path=' . $fnd . '/') . '">' . $fnd . '</a>'
                     : $fnd)
                     . '</td>');
+                    print('<td>'
+                . (is_dir($path . $fnd) 
+                    ? ''
+                    : '<form style="display: inline-block" action="" method="post">
+                        <input type="hidden" name="delete" value=' . str_replace(' ', '&nbsp;', $fnd) . '>
+                        <input type="submit" value="Delete">
+                       </form>'
+                ) 
+                . "</form></td>");
+            print('</tr>');
             }
         }
         print("</table>");
